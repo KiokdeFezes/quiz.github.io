@@ -1,287 +1,167 @@
-<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Quiz - Arte Gráfica</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 20px;
-    }
-    .quiz-container {
-      background: #fff;
-      border-radius: 10px;
-      padding: 30px;
-      max-width: 700px;
-      width: 100%;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    h1 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    .question {
-      font-size: 1.2em;
-      margin-bottom: 20px;
-    }
-    .answers {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .answers button {
-      padding: 10px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      background-color: #eee;
-      transition: 0.3s;
-      font-size: 1em;
-    }
-    .answers button.correct {
-      background-color: #4caf50;
-      color: white;
-    }
-    .answers button.incorrect {
-      background-color: #f44336;
-      color: white;
-    }
-    #next-btn {
-      display: none;
-      margin-top: 20px;
-      padding: 10px 20px;
-      background-color: #2196f3;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 1em;
-    }
-    #result {
-      display: none;
-    }
-    .summary-item {
-      margin-bottom: 20px;
-    }
-    .summary-item.correct::before {
-      content: "✔ ";
-      color: green;
-      font-weight: bold;
-    }
-    .summary-item.incorrect::before {
-      content: "✖ ";
-      color: red;
-      font-weight: bold;
-    }
-    .explanation {
-      font-size: 0.95em;
-      color: #555;
-      margin-top: 5px;
-    }
-    .score {
-      font-size: 1.2em;
-      font-weight: bold;
-      margin-bottom: 20px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz - Artes Gráficas</title>
+<style>
+    body { font-family: Arial, sans-serif; margin: 20px; background-color: #f5f5f5; display: flex; justify-content: center; }
+    .quiz-container { background: white; padding: 20px; border-radius: 10px; max-width: 600px; width: 100%; text-align: center; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    h2 { color: #333; }
+    .answers { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: 15px; }
+    button.answer-btn { padding: 10px 20px; min-width: 250px; border: none; border-radius: 5px; cursor: pointer; background: #007bff; color: white; }
+    button.answer-btn:hover { background: #0056b3; }
+    #nextBtn { margin-top: 30px; padding: 10px 20px; border: none; border-radius: 5px; background: #28a745; color: white; cursor: pointer; }
+    #nextBtn:hover { background: #1e7e34; }
+    .hidden { display: none; }
+    .result { font-size: 20px; font-weight: bold; margin-top: 20px; }
+    input[type="text"] { padding: 8px; width: 60%; border-radius: 5px; border: 1px solid #ccc; margin-top: 10px; }
+    .feedback { margin-top: 10px; font-weight: bold; }
+</style>
 </head>
 <body>
-  <div class="quiz-container">
-    <h1>Quiz: Arte Gráfica</h1>
-    <div id="quiz">
-      <div id="question" class="question"></div>
-      <div id="answers" class="answers"></div>
-      <button id="next-btn">Próxima</button>
-    </div>
-    <div id="result">
-      <div class="score" id="score"></div>
-      <div id="summary"></div>
-    </div>
-  </div>
 
-  <script>
-   const quizData = [
-  {
-    question: "O que é arte gráfica?",
-    type: "multiple",
-    options: [
-      "Arte que usa apenas fotografias",
-      "Tipo de arte que usa fontes, cores e imagens para se comunicar",
-      "Arte apenas digital",
-      "Arte sem uso de texto"
-    ],
-    correct: 1,
-    explanation: "Arte gráfica utiliza diferentes fontes, cores e imagens para se comunicar de forma eficiente e interessante."
-  },
-  {
-    question: "Verdadeiro ou falso: Lettering é o uso de fontes manuais para transmitir uma ideia.",
-    type: "boolean",
-    options: ["Verdadeiro", "Falso"],
-    correct: 0,
-    explanation: "Lettering valoriza a arte manual com o uso de diferentes fontes para transmitir uma ideia."
-  },
-  {
-    question: "Qual o objetivo principal dos designers ao criar fontes?",
-    type: "multiple",
-    options: [
-      "Aumentar o contraste visual",
-      "Criar novas formas de expressão",
-      "Criar novas fontes",
-      "Evitar o uso de imagens"
-    ],
-    correct: 2,
-    explanation: "O principal objetivo dos designers nesse contexto é criar novas fontes."
-  },
-  {
-    question: "Verdadeiro ou falso: As cores são usadas apenas para harmonizar elementos.",
-    type: "boolean",
-    options: ["Verdadeiro", "Falso"],
-    correct: 1,
-    explanation: "As cores podem harmonizar, mas também são usadas para atrair a atenção das pessoas."
-  },
-  {
-    question: "Para uma boa diagramação, é importante:",
-    type: "multiple",
-    options: [
-      "Usar somente imagens",
-      "Evitar títulos chamativos",
-      "Alinhar textos e destacar informações",
-      "Usar o mínimo de cor"
-    ],
-    correct: 2,
-    explanation: "Boa diagramação exige fonte eficiente, título chamativo, textos alinhados e destaque visual."
-  },
-  {
-    question: "O que é um logo?",
-    type: "multiple",
-    options: [
-      "Um texto descritivo de uma marca",
-      "Imagem decorativa sem função",
-      "Ícone ou figura que identifica uma entidade",
-      "Qualquer figura colorida"
-    ],
-    correct: 2,
-    explanation: "Logo é um ícone ou figura que identifica uma marca, time, empresa, etc."
-  },
-  {
-    question: "Verdadeiro ou falso: A comunicação visual usa ícones e símbolos para orientar ou comunicar.",
-    type: "boolean",
-    options: ["Verdadeiro", "Falso"],
-    correct: 0,
-    explanation: "Comunicação visual envolve o uso de ícones, símbolos e desenhos estilizados para orientar ou comunicar."
-  },
-  {
-    question: "O que os designers gráficos devem saber fazer?",
-    type: "multiple",
-    options: [
-      "Somente saber desenhar à mão",
-      "Ter habilidades com programas, cores, tons e fontes",
-      "Trabalhar apenas com esculturas",
-      "Evitar usar fontes e cores"
-    ],
-    correct: 1,
-    explanation: "Designers gráficos devem saber desenhar e ter habilidades com programas, cores, tons e fontes."
-  },
-  {
-    question: "Verdadeiro ou falso: A criação de logotipos não faz parte do trabalho do designer gráfico.",
-    type: "boolean",
-    options: ["Verdadeiro", "Falso"],
-    correct: 1,
-    explanation: "A criação de logos faz sim parte do trabalho do designer gráfico."
-  },
-  {
-    question: "Quem usou inicialmente a fotografia para transmitir ideias no design?",
-    type: "multiple",
-    options: [
-      "Designers italianos",
-      "Designers russos",
-      "Designers franceses",
-      "Designers americanos"
-    ],
-    correct: 1,
-    explanation: "A fotografia foi usada primeiramente pelos designers russos para transmitir ideias."
-  }
+<div class="quiz-container">
+    <h2 id="question"></h2>
+    <div id="answers" class="answers"></div>
+    <button id="nextBtn" class="hidden">Próxima</button>
+    <div id="result" class="result"></div>
+</div>
+
+<script>
+function normalize(text) {
+    return text.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
+}
+
+function similarity(s1, s2) {
+    s1 = normalize(s1);
+    s2 = normalize(s2);
+    let matches = 0;
+    const len = Math.max(s1.length, s2.length);
+    for (let i = 0; i < Math.min(s1.length, s2.length); i++) {
+        if (s1[i] === s2[i]) matches++;
+    }
+    return matches / len;
+}
+
+const quizData = [
+    {type: "mc", q: "O que é arte gráfica?", a: ["Tipo de pintura a óleo", "Tipo de arte que usa fontes, cores e imagens para comunicação", "Somente desenho digital", "Escultura moderna"], c: 1},
+    {type: "mc", q: "Qual habilidade é importante para o designer gráfico?", a: ["Apenas programação", "Somente pintura", "Desenhar e lidar com cores e fontes", "Esculpir"], c: 2},
+    {type: "tf", q: "Fontes são desenhos das letras.", c: true},
+    {type: "tf", q: "Lettering é a criação de esculturas.", c: false},
+    {type: "open", q: "Quem usou fotografia primeiramente para transmitir ideias?", c: "designers russos"},
+    {type: "mc", q: "O que é diagramação?", a: ["Processo de cortar imagens", "Organizar elementos gráficos com harmonia", "Ajustar o volume do áudio", "Criar animações"], c: 1},
+    {type: "open", q: "Qual é o objetivo principal dos designers ao criar fontes?", c: "criar novas fontes"},
+    {type: "tf", q: "Cores podem ser usadas para atrair a atenção do público.", c: true},
+    {type: "mc", q: "O que é comunicação visual?", a: ["Escrita de textos", "Uso de ícones e símbolos para comunicação", "Som de anúncios", "Design de som"], c: 1},
+    {type: "open", q: "O que é logo?", c: "ícone ou figura que identifica"}
 ];
 
+let currentQuestion = 0;
+let score = 0;
 
-    let currentQuestion = 0;
-    let score = 0;
-    const quiz = document.getElementById("quiz");
-    const questionEl = document.getElementById("question");
-    const answersEl = document.getElementById("answers");
-    const nextBtn = document.getElementById("next-btn");
-    const resultEl = document.getElementById("result");
-    const scoreEl = document.getElementById("score");
-    const summaryEl = document.getElementById("summary");
+const questionEl = document.getElementById("question");
+const answersEl = document.getElementById("answers");
+const nextBtn = document.getElementById("nextBtn");
+const resultEl = document.getElementById("result");
 
-    const userAnswers = [];
+function loadQuestion() {
+    const q = quizData[currentQuestion];
+    questionEl.textContent = q.q;
+    answersEl.innerHTML = "";
+    nextBtn.classList.add("hidden");
 
-    function loadQuestion() {
-      const q = quizData[currentQuestion];
-      questionEl.textContent = q.question;
-      answersEl.innerHTML = "";
-      nextBtn.style.display = "none";
+    if (q.type === "mc") {
+        q.a.forEach((answer, index) => {
+            const btn = document.createElement("button");
+            btn.textContent = answer;
+            btn.classList.add("answer-btn");
+            btn.onclick = () => checkAnswer(index);
+            answersEl.appendChild(btn);
+        });
+    } else if (q.type === "tf") {
+        ["Verdadeiro", "Falso"].forEach((val, index) => {
+            const btn = document.createElement("button");
+            btn.textContent = val;
+            btn.classList.add("answer-btn");
+            btn.onclick = () => checkAnswer(index === 0);
+            answersEl.appendChild(btn);
+        });
+    } else if (q.type === "open") {
+        const input = document.createElement("input");
+        input.type = "text";
+        input.placeholder = "Digite sua resposta...";
+        answersEl.appendChild(input);
 
-      q.options.forEach((option, index) => {
+        const feedback = document.createElement("div");
+        feedback.className = "feedback";
+        answersEl.appendChild(feedback);
+
         const btn = document.createElement("button");
-        btn.textContent = option;
-        btn.onclick = () => selectAnswer(btn, index);
+        btn.textContent = "Confirmar";
+        btn.classList.add("answer-btn");
+        btn.onclick = () => {
+            const userAnswer = input.value;
+            const sim = similarity(userAnswer, q.c);
+            if(sim >= 0.6){
+                score++;
+                input.style.borderColor = "green";
+                feedback.textContent = "Correto!";
+                feedback.style.color = "green";
+            } else {
+                input.style.borderColor = "red";
+                feedback.textContent = "Incorreto! Resposta correta: " + q.c;
+                feedback.style.color = "red";
+            }
+            Array.from(answersEl.querySelectorAll("button")).forEach(b => b.disabled = true);
+            nextBtn.classList.remove("hidden");
+        };
         answersEl.appendChild(btn);
-      });
+    }
+}
+
+function checkAnswer(isCorrect) {
+    const q = quizData[currentQuestion];
+    let correct = false;
+    if (typeof isCorrect === "boolean") {
+        correct = isCorrect === q.c;
+    } else if (typeof isCorrect === "number") {
+        correct = isCorrect === q.c;
     }
 
-    function selectAnswer(btn, index) {
-      const q = quizData[currentQuestion];
-      const buttons = answersEl.querySelectorAll("button");
+    if (correct) score++;
 
-      buttons.forEach((button, i) => {
-        button.disabled = true;
-        if (i === q.correct) {
-          button.classList.add("correct");
-        } else if (i === index) {
-          button.classList.add("incorrect");
-        }
-      });
+    nextBtn.classList.remove("hidden");
 
-      if (index === q.correct) score++;
-
-      userAnswers.push({ correct: index === q.correct, explanation: q.explanation, question: q.question });
-
-      nextBtn.style.display = "block";
+    if (q.type === "mc" || q.type === "tf") {
+        Array.from(answersEl.children).forEach((btn, index) => {
+            btn.disabled = true;
+            if ((q.type === "mc" && index === q.c) || (q.type === "tf" && ((q.c && index === 0) || (!q.c && index === 1)))) {
+                btn.style.backgroundColor = "green";
+            } else {
+                btn.style.backgroundColor = "red";
+            }
+        });
     }
+}
 
-    nextBtn.onclick = () => {
-      currentQuestion++;
-      if (currentQuestion < quizData.length) {
+nextBtn.onclick = () => {
+    currentQuestion++;
+    if (currentQuestion < quizData.length) {
         loadQuestion();
-      } else {
+    } else {
         showResult();
-      }
-    };
-
-    function showResult() {
-      quiz.style.display = "none";
-      resultEl.style.display = "block";
-      scoreEl.textContent = `Você acertou ${score} de ${quizData.length} perguntas.`;
-
-      summaryEl.innerHTML = "";
-      userAnswers.forEach((ans, idx) => {
-        const div = document.createElement("div");
-        div.classList.add("summary-item");
-        div.classList.add(ans.correct ? "correct" : "incorrect");
-        div.innerHTML = `<strong>${idx + 1}. ${ans.question}</strong><div class="explanation">${ans.explanation}</div>`;
-        summaryEl.appendChild(div);
-      });
     }
+};
 
-    loadQuestion();
-  </script>
+function showResult() {
+    questionEl.classList.add("hidden");
+    answersEl.classList.add("hidden");
+    nextBtn.classList.add("hidden");
+    resultEl.textContent = `Você acertou ${score} de ${quizData.length} perguntas!`;
+}
+
+loadQuestion();
+</script>
+
 </body>
 </html>
-
